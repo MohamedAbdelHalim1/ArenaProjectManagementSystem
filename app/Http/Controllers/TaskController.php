@@ -16,6 +16,8 @@ class TaskController extends Controller
             'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
             'project_id' => 'required|exists:projects,id',
+            'deadline'=>'nullable|date'
+
         ]);
 
         Task::create([
@@ -24,6 +26,8 @@ class TaskController extends Controller
             'status' => $request->status,
             'user_id' => $request->user_id,
             'project_id' => $request->project_id,
+            'deadline'=>$request->deadline,
+
         ]);
 
         return redirect()->route('projects.show', $request->project_id)->with('success', 'Task added successfully.');
@@ -42,6 +46,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
+            'deadline'=>'nullable|date'
         ]);
 
         $task->update([
@@ -49,6 +54,7 @@ class TaskController extends Controller
             'description' => $request->description,
             'status' => $request->status,
             'user_id' => $request->user_id,
+            'deadline'=>$request->deadline,
         ]);
 
         return redirect()->route('projects.show', $task->project_id)->with('success', 'Task updated successfully.');

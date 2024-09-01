@@ -26,6 +26,8 @@ class ProjectController extends Controller
             'tasks.*.description' => 'nullable|string',
             'tasks.*.status' => 'required|string',
             'tasks.*.user_id' => 'required|exists:users,id',
+            'tasks.*.deadline' => 'nullable|date', // Task deadline validation
+
         ]);
 
         $project = Project::create([
@@ -33,6 +35,7 @@ class ProjectController extends Controller
             'description' => $request->description,
             'status' => $request->status,
             'user_id' => $request->user_id,
+            'deadline'=>$request->p_deadline,
         ]);
 
         foreach ($request->tasks as $taskData) {
@@ -41,6 +44,7 @@ class ProjectController extends Controller
                 'description' => $taskData['description'],
                 'status' => $taskData['status'],
                 'user_id' => $taskData['user_id'],
+                'deadline' => $taskData['deadline'], 
             ]);
         }
 

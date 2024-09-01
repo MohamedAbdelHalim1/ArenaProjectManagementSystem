@@ -39,6 +39,10 @@
                             @enderror
                         </div>
                         <div class="mb-4">
+                            <label for="deadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline</label>
+                            <input type="date" id="deadline" name="p_deadline" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        <div class="mb-4">
                             <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Assign Project to User</label>
                             <select id="user_id" name="user_id" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
                                 @foreach($users as $user)
@@ -67,6 +71,11 @@
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <div class="mb-4">
+                                    <label for="tasks[0][deadline]" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Deadline</label>
+                                    <input type="date" name="tasks[0][deadline]" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </div>
+
                                 <div class="mb-4">
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                                     <select name="tasks[0][status]" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
@@ -125,6 +134,11 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    <div class="mb-4">
+                        <label for="tasks[${taskIndex}][deadline]" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Deadline</label>
+                        <input type="date" name="tasks[${taskIndex}][deadline]" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                         <select name="tasks[${taskIndex}][status]" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
