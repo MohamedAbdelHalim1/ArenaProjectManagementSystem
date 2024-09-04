@@ -19,7 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'role',
+        'role_id',
         'email',
         'password',
     ];
@@ -47,5 +47,17 @@ class User extends Authenticatable
     public function projects()
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+    public function role(){
+        return $this->belongsTo(Role::class , 'role_id');
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

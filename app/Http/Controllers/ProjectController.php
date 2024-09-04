@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Department;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -19,6 +21,7 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'client_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
@@ -26,7 +29,7 @@ class ProjectController extends Controller
             'tasks.*.description' => 'nullable|string',
             'tasks.*.status' => 'required|string',
             'tasks.*.user_id' => 'required|exists:users,id',
-            'tasks.*.deadline' => 'nullable|date', // Task deadline validation
+            'tasks.*.deadline' => 'nullable|date',
 
         ]);
 
@@ -36,15 +39,33 @@ class ProjectController extends Controller
             'status' => $request->status,
             'user_id' => $request->user_id,
             'deadline'=>$request->p_deadline,
+            'client_name'=>$request->client_name,
         ]);
 
+        ActivityLog::create([
+            'project_id' => $project->id,
+            'user_id' => auth()->id(),
+            'action' => 'Project Created',
+            'description' => 'Project created by ' . auth()->user()->name . ' and assigned to '. $project->user->name,
+        ]);
+        
+
         foreach ($request->tasks as $taskData) {
-            $project->tasks()->create([
+            // Create the task
+            $task = $project->tasks()->create([
                 'title' => $taskData['title'],
                 'description' => $taskData['description'],
                 'status' => $taskData['status'],
                 'user_id' => $taskData['user_id'],
                 'deadline' => $taskData['deadline'], 
+            ]);
+    
+            // Log the creation of the task
+            ActivityLog::create([
+                'project_id' => $project->id,
+                'user_id' => auth()->id(),
+                'action' => 'Task Created',
+                'description' => 'Task "' . $task->title . '" created by ' . auth()->user()->name . ' and assigned to ' . $task->user->name,
             ]);
         }
 
@@ -53,9 +74,18 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = auth()->user()->role === 'admin' ? Project::all() : auth()->user()->projects;
-        return view('dashboard', compact('projects'));
+        $projects = auth()->user()->role->id === 1 ? Project::all() : auth()->user()->projects;
+
+        $totalProjects = Project::count();
+        $totalTasksStarted = Task::where('status','started')->count();
+        $totalTasksNotStarted = Task::where('status','not_started')->count();
+        $totalTasksDone = Task::where('status','done')->count();
+        $totalStaff = User::count();
+        $departments = Department::count();
+
+        return view('dashboard', compact('projects', 'totalProjects', 'totalTasksDone' ,'totalTasksStarted' ,'departments','totalTasksNotStarted', 'totalStaff'));
     }
+
 
     public function show(Project $project)
     {
@@ -73,20 +103,56 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'client_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
+            'deadline' => 'required|date'
         ]);
-
+    
+        // Capture old values
+        $oldValues = $project->only(['name', 'description', 'status', 'user_id', 'deadline','client_name']);
+        
+        // Update the project
         $project->update([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status,
             'user_id' => $request->user_id,
+            'deadline' => $request->deadline,
+            'client_name' => $request->client_name,
         ]);
-
+    
+        // Capture new values
+        $newValues = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+            'user_id' => $request->user_id,
+            'deadline' => $request->deadline,
+            'client_name' => $request->client_name,
+        ];
+    
+        // Build description
+        $description = 'Project updated by ' . auth()->user()->name . '. Changes: ';
+    
+        foreach ($oldValues as $key => $oldValue) {
+            if ($oldValue != $newValues[$key]) {
+                $description .= ucfirst($key) . ' changed from "' . $oldValue . '" to "' . $newValues[$key] . '". ';
+            }
+        }
+    
+        // Create activity log
+        ActivityLog::create([
+            'project_id' => $project->id,
+            'user_id' => auth()->id(),
+            'action' => 'Project Update',
+            'description' => $description,
+        ]);
+    
         return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully.');
     }
+    
 
     public function updateStatus(Request $request, Project $project)
     {
@@ -99,9 +165,10 @@ class ProjectController extends Controller
         if ($request->status === 'refused') {
             $project->refusal_reason = $request->refusal_reason;
         } else {
-            $project->refusal_reason = null; // Clear refusal reason if not refused
+            $project->refusal_reason = null;
         }
         $project->save();
+
 
         return redirect()->route('dashboard')->with('success', 'Project status updated successfully.');
     }
@@ -110,5 +177,10 @@ class ProjectController extends Controller
     {
         $project->delete();
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function logs($id){
+        $activities = ActivityLog::where('project_id',$id)->get();
+        return view('projects.activity',compact('activities'));
     }
 }

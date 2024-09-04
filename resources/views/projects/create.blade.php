@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            <b>{{ auth()->user()->name }}'s </b>{{ __('Create New Project') }}<br>
+            <b>{{ explode(' ', auth()->user()->name)[0] }}'s </b>{{ __('Create New Project') }}<br>
         </h2>
     </x-slot>
 
@@ -21,6 +21,13 @@
                             @enderror
                         </div>
                         <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Client Name</label>
+                            <input type="text" id="name" name="client_name" value="{{ old('client_name') }}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                            @error('client_name')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                             <textarea id="description" name="description" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ old('description') }}</textarea>
                             @error('description')
@@ -30,8 +37,9 @@
                         <div class="mb-4">
                             <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                             <select id="status" name="status" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                                <option value="ask_to_start" {{ old('status') === 'Ask_To_Start' ? 'selected' : '' }}>Ask To Start</option>
+                                <option value="started" {{ old('status') === 'started' ? 'selected' : '' }}>Start</option>
                                 <option value="not_started" {{ old('status') === 'not_started' ? 'selected' : '' }}>Not Started</option>
-                                <option value="started" {{ old('status') === 'started' ? 'selected' : '' }}>Started</option>
                                 <option value="done" {{ old('status') === 'done' ? 'selected' : '' }}>Done</option>
                             </select>
                             @error('status')
@@ -65,7 +73,7 @@
                                     @enderror
                                 </div>
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Description</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Note</label>
                                     <textarea name="tasks[0][description]" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
                                     @error('tasks.*.description')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -128,7 +136,7 @@
                         @enderror
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Description</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Note</label>
                         <textarea name="tasks[${taskIndex}][description]" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
                         @error('tasks.*.description')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
