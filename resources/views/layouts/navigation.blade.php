@@ -37,7 +37,7 @@
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
-                                <img src="{{ asset('assets/images/arena.png') }}" alt="Arena Image" class="h-4 w-4">
+                                <img src="{{ asset('assets/images/arena.png') }}" alt="Arena Image" class="h-2 w-2">
                             </div>
 
                         </button>
