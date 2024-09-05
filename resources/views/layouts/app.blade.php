@@ -9,6 +9,9 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="{{ asset('assets/images/arena.png') }}" type="image/jpeg">
 
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" />
+    
         <title>{{ config('app.name', 'Arena') }}</title>
 
         <!-- Fonts -->

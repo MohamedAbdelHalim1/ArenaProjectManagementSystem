@@ -10,7 +10,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white dark:bg-gray-800">
-                    <h4 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-4">Activity Log</h4>
+                    <div class="d-flex justify-content-between">
+                        <h4 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-4">Activity Log</h4>
+                        <a href="{{ route('log.clear', $id) }}" class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" style="height:40px;" onclick="return confirm('Are you sure you want to delete all History?');">Clear History</a>
+                    </div>
                     
                     @if($activities->isEmpty())
                         <p class="text-center text-gray-500 dark:text-gray-400">No activities recorded yet.</p>

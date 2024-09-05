@@ -24,7 +24,8 @@ class TaskController extends Controller
             'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
             'project_id' => 'required|exists:projects,id',
-            'deadline' => 'nullable|date'
+            'deadline' => 'nullable|date',
+            'drive_url' => 'nullable|url'
         ]);
     
         // Create the task
@@ -35,7 +36,9 @@ class TaskController extends Controller
             'user_id' => $request->user_id,
             'project_id' => $request->project_id,
             'deadline' => $request->deadline,
+            'drive_url' => $request->drive_url
         ]);
+
     
         // Create an activity log entry for the task creation
         ActivityLog::create([
@@ -47,6 +50,50 @@ class TaskController extends Controller
     
         return redirect()->route('projects.show', $request->project_id)->with('success', 'Task added successfully.');
     }
+
+    public function uploadFiles(Request $request, Task $task)
+    {
+        $files = [];
+        if ($request->hasFile('attached_files')) {
+            foreach ($request->file('attached_files') as $file) {
+                $filename = $file->store('task_files');
+                $files[] = $filename;
+            }
+            $task->attached_files = json_encode($files);
+            $task->save();
+        }
+    
+        return back()->with('success', 'Files uploaded successfully!');
+    }
+    
+    public function uploadPhotos(Request $request, Task $task)
+    {
+        $photos = [];
+        if ($request->hasFile('attached_photos')) {
+            foreach ($request->file('attached_photos') as $photo) {
+                $filename = $photo->store('task_photos');
+                $photos[] = $filename;
+            }
+            $task->attached_photos = json_encode($photos);
+            $task->save();
+        }
+    
+        return back()->with('success', 'Photos uploaded successfully!');
+    }
+    
+
+public function downloadFile($filename)
+{
+    $file_path = public_path('uploads/files/' . $filename);
+    return response()->download($file_path);
+}
+
+public function downloadPhoto($photoname)
+{
+    $photo_path = public_path('uploads/photos/' . $photoname);
+    return response()->download($photo_path);
+}
+
     
 
     public function edit(Task $task)
@@ -57,24 +104,23 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
+        //dd($request);
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|string',
             'user_id' => 'required|exists:users,id',
-            'deadline' => 'nullable|date'
+            'deadline' => 'nullable|date',
+            'drive_url' => 'nullable|url'
         ]);
     
-        // Store old values for comparison
-        $oldValues = $task->only(['title', 'description', 'status', 'user_id', 'deadline']);
+        $oldValues = $task->only(['title', 'description', 'user_id', 'deadline','drive_url']);
     
-        // Update the task
         $task->update([
             'title' => $request->title,
             'description' => $request->description,
-            'status' => $request->status,
             'user_id' => $request->user_id,
             'deadline' => $request->deadline,
+            'drive_url' => $request->drive_url
         ]);
     
         // Prepare the description for activity log
@@ -172,4 +218,33 @@ class TaskController extends Controller
     
         return response()->json(['tasks' => $tasks]);
     }
+
+
+    public function storeComment(Request $request, Task $task)
+    {
+        $request->validate([
+            'body' => 'required',
+        ]);
+
+        $comment = $task->comments()->create([
+            'body' => $request->body,
+            'user_id' => auth()->id(),
+        ]);
+
+        return response()->json([
+            'id' => $comment->id,
+            'body' => $comment->body,
+            'user' => $comment->user->name,
+            'date' => $comment->created_at->diffForHumans(),
+        ]);
+    }
+
+    public function getComments(Task $task)
+    {
+        $comments = $task->comments()->with('user')->latest()->get();
+
+        return response()->json($comments);
+    }
+
+
 }

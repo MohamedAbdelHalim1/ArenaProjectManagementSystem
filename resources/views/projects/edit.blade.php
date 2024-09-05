@@ -36,6 +36,11 @@
                             @enderror
                         </div>
                         <div class="mb-4">
+                            <label for="drive_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Drive URL</label>
+                            <input type="url" id="drive_url" name="drive_url" value="{{ old('drive_url', $project->drive_url) }}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div class="mb-4">
                             <label for="deadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline</label>
                             <input type="date" id="deadline" name="deadline" value="{{$project->deadline}}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>

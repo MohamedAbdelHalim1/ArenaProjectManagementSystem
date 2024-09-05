@@ -17,15 +17,15 @@
                         </div>
 
                         <!-- Modal Structure -->
-                        <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content dark:bg-gray-800 dark:text-white">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="taskModalLabel">Add New Role</h5>
+                                        <h5 class="modal-title" id="roleModalLabel">Add New Role</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form id="roleId" method="POST" action="{{ route('role.store') }}">
+                                        <form id="roleForm" method="POST" action="{{ route('role.store') }}">
                                             @csrf
 
                                             <!-- Name -->
@@ -38,6 +38,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" form="roleForm" class="btn btn-primary">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -107,6 +108,8 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-4nTE8BmoAm2B3LLD2DmnQYZ3A5P7z5b3kZB4Mk4dNGy9p6zb6sG9g48NkS1/ytzR" crossorigin="anonymous"></script>
 
 
     <script>

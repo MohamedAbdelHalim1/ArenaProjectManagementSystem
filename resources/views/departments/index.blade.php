@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             <b>{{ explode(' ', auth()->user()->name)[0] }}'s </b>{{ __('Dashboard') }}<br>
-            <small><b style="font-size:15px;">Role:</b>{{ auth()->user()->role->name }}</small>
+            <small><b style="font-size:15px;">Role:</b> {{ auth()->user()->role->name }}</small>
         </h2>
     </x-slot>
 
@@ -10,7 +10,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if (auth()->user()->role->id === 1  || auth()->user()->role->name === "project manager")
+                    @if (auth()->user()->role->id === 1 || auth()->user()->role->name === "project manager")
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">All Departments</h3>
                             <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-bs-toggle="modal" data-bs-target="#departmentModal">Add New Department</a>
@@ -162,90 +162,56 @@
         </div>
     </div>
 
-    <!-- Select2 CSS and JS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
 
+    <!-- Initialize Select2 -->
     <script>
-    $(document).ready(function() {
-        $('#staffs, #edit_staffs').select2({
-            placeholder: 'Select staff',
-            tags: true, // Allows for tag-like selection
-            tokenSeparators: [',', ' '], // Allows tag creation with comma or space
-            allowClear: true
-        });
-    });
-    </script>
+        $(document).ready(function() {
+            $('#staffs, #edit_staffs').select2({
+                placeholder: 'Select staff',
+                width: '100%'
+            });
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var editDepartmentModal = document.getElementById('editDepartmentModal');
-            editDepartmentModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var departmentId = button.getAttribute('data-department-id');
-                var departmentName = button.getAttribute('data-department-name');
-                var departmentStaffs = button.getAttribute('data-department-staffs').split(',');
+            $('#editDepartmentModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var departmentId = button.data('department-id');
+                var departmentName = button.data('department-name');
+                var departmentStaffs = button.data('department-staffs').split(',');
 
-                // Set the form action to the edit route
-                var form = document.getElementById('editDepartmentForm');
-                form.action = `/departments/${departmentId}`;
+                var modal = $(this);
+                modal.find('#edit_name').val(departmentName);
 
-                // Prefill the form fields
-                document.getElementById('edit_name').value = departmentName;
-                $('#edit_staffs').val(departmentStaffs).trigger('change');
+                var $editStaffs = modal.find('#edit_staffs');
+                $editStaffs.val(departmentStaffs).trigger('change');
+                modal.find('form').attr('action', '/departments/' + departmentId);
+            });
+
+            $('#departmentmemberModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var departmentId = button.data('department-id');
+                var departmentName = button.data('department-name');
+
+                var modal = $(this);
+                modal.find('#departmentName').text(departmentName);
+
+                $.ajax({
+                    url: '/departments/' + departmentId + '/users',
+                    method: 'GET',
+                    success: function(data) {
+                        var usersList = $('#departmentUsersList');
+                        usersList.empty();
+
+                        data.users.forEach(function(user) {
+                            usersList.append('<tr><td>' + user.name + '</td><td>' + user.email + '</td></tr>');
+                        });
+                    }
+                });
             });
         });
     </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Open Edit Modal and Populate Form
-    $('#editDepartmentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var departmentId = button.data('department-id'); // Extract info from data-* attributes
-        var departmentName = button.data('department-name'); // Extract info from data-* attributes
-
-        var modal = $(this);
-        var form = modal.find('form');
-        var url = form.attr('action').replace(':id', departmentId);
-
-        // Set form action
-        form.attr('action', url);
-
-        // Populate form fields
-        modal.find('#edit_name').val(departmentName);
-
-        // Fetch and populate staff
-        $.get('{{ url('departments') }}/' + departmentId + '/edit', function (data) {
-            var staffSelect = modal.find('#edit_staffs');
-            staffSelect.empty();
-            $.each(data.staffs, function (index, staff) {
-                staffSelect.append(new Option(staff.name, staff.id, data.department.staffs.includes(staff.id)));
-            });
-        });
-    });
-
-    // Handle form submission via AJAX
-    $('#editDepartmentForm').on('submit', function (event) {
-        event.preventDefault();
-
-        var form = $(this);
-        var formData = form.serialize();
-        var url = form.attr('action');
-
-        $.ajax({
-            url: url,
-            type: 'PUT',
-            data: formData,
-            success: function (response) {
-                alert(response.success);
-                location.reload(); // Refresh the page to see changes
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-});
-</script>
-
 </x-app-layout>

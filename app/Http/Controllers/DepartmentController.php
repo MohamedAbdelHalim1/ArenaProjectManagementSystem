@@ -79,4 +79,19 @@ class DepartmentController extends Controller
     
         return redirect()->back();
     }
+
+
+    public function getUsersByDepartment(Department $department)
+    {
+        $users = $department->users; // Assuming you have a relationship defined in the Department model
+        return response()->json(['users' => $users]);
+    }
+    
+
+    public function getUsers($id)
+    {
+        $users = User::where('department_id', $id)->get();
+        return response()->json(['users' => $users]);
+    }
+
 }

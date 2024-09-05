@@ -15,7 +15,7 @@
                     @if($staff->tasks->count() > 0)
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach($staff->tasks as $task)
-                                <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-lg">
+                                <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
                                     <h4 class="font-semibold text-blue-600 dark:text-blue-400">{{ $task->title }}</h4>
                                     <p class="mt-2 text-gray-600 dark:text-gray-400">{{ $task->description }}</p>
 

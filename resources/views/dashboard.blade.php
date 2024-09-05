@@ -71,7 +71,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if (auth()->user()->role->id === 1 || auth()->user()->role->name === 'project manager' || auth()->user()->role->name === 'project managers')
+                    @if (auth()->user()->role->id === 1 || auth()->user()->role->name === 'Project Manager' || auth()->user()->role->name === 'project manager')
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">All Projects</h3>
                             <a href="{{ route('projects.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Add New Project</a>
@@ -96,7 +96,7 @@
                                                 <a href="{{ route('projects.show', $project->id) }}" class="text-blue-600 dark:text-blue-400 hover:underline">Show</a>
                                                 <a href="{{ route('projects.edit', $project->id) }}" class="ml-4 text-green-600 dark:text-green-400 hover:underline">Edit</a>
                                                 <a href="{{ route('logs', $project->id) }}" class="ml-4 text-orange-600 dark:text-blue-400 hover:underline">Activity Log</a>
-                                                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="inline-block">
+                                                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete The Project?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="ml-4 text-red-600 dark:text-red-400 hover:underline">Delete</button>
@@ -108,56 +108,34 @@
                             </table>
                         </div>
                     @else
-                        <h3 class="text-lg font-semibold mb-4">Your Projects</h3>
+                        <h3 class="text-lg font-semibold mb-4">Your Project</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-800">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Number Of Tasks</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+                                    @php
+                                    $projects = App\Models\Project::whereHas('tasks', function ($query) {
+                                        $query->where('user_id', auth()->user()->id);
+                                    })->get();
+                                    @endphp
                                     @foreach($projects as $project)
-                                        @if($project->user_id == auth()->user()->id)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $project->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $project->description }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                <form action="{{ route('projects.updateStatus', $project->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <select name="status" class="form-select mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" onchange="this.form.submit()">
-                                                        <option value="ask_to_start" {{ $project->status === 'ask_to_start' ? 'selected' : '' }}>Ask To Start</option>
-                                                        <option value="started" {{ $project->status === 'started' ? 'selected' : '' }}>Start</option>
-                                                        <option value="not_started" {{ $project->status === 'not_started' ? 'selected' : '' }}>Not Started</option>
-                                                        <option value="done" {{ $project->status === 'done' ? 'selected' : '' }}>Done</option>
-                                                        <option value="refused" {{ $project->status === 'refused' ? 'selected' : '' }}>Refused</option>
-                                                    </select>
-                                                    @if($project->status === 'refused')
-                                                        <textarea name="refusal_reason" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Reason for refusal">{{ old('refusal_reason', $project->refusal_reason) }}</textarea>
-                                                        <div class="flex items-center justify-between">
-                                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Update Project</button>
-                                                        </div>
-                                                    @endif
-                                      
-                                                </form>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('projects.show', $project->id) }}" class="text-blue-600 dark:text-blue-400 hover:underline">Show</a>
-                                                @if(auth()->user()->role === 'admin')
-                                                <a href="{{ route('projects.edit', $project->id) }}" class="ml-4 text-green-600 dark:text-green-400 hover:underline">Edit</a>
-                                                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="ml-4 text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                                                </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @endif
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $project->name }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $project->description }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                        {{$project->tasks->count()}}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <a href="{{ route('projects.show', $project->id) }}" class="text-blue-600 dark:text-blue-400 hover:underline">Show</a>
+                                                    </td>
+                                                </tr>
                                     @endforeach
                                 </tbody>
                             </table>

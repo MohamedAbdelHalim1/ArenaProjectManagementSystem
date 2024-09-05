@@ -7,6 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ListItemController;
 
 
 /*
@@ -45,11 +46,33 @@ Route::middleware('auth')->group(function () {
     Route::delete('/staff/{user}',[StaffController::class,'destroy'])->name('staff.destroy');
     Route::delete('/role/{role}',[RoleController::class,'destroy'])->name('role.destroy');
     Route::get('/roles/{role}/users', [RoleController::class, 'getUsers']);
+    Route::get('departments/{department}/users', [DepartmentController::class, 'getUsersByDepartment']);
+    Route::get('/departments/{id}/users', [DepartmentController::class, 'getUsers']);
+
     Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');
     Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
     Route::get('/staff/track/{id}', [StaffController::class, 'track'])->name('staff.track');
     Route::get('/tasks/search', [TaskController::class, 'search'])->name('tasks.search');
+    Route::get('/log/{id}' , [ProjectController::class , 'clear'])->name('log.clear');
 
+    Route::get('/tasks/{task}/list-items', [ListItemController::class, 'index']);
+    Route::post('/tasks/{task}/list-items', [ListItemController::class, 'store']);
+    Route::patch('/list-items/{listItem}', [ListItemController::class, 'update']);
+    Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.comments.store');
+    Route::get('/tasks/{task}/comments', [TaskController::class, 'getComments']);
+    
+
+   // Project Routes
+Route::post('/projects/{project}/upload-files', [ProjectController::class, 'uploadFiles'])->name('projects.uploadFiles');
+Route::post('/projects/{project}/upload-photos', [ProjectController::class, 'uploadPhotos'])->name('projects.uploadPhotos');
+Route::get('/projects/download-file/{filename}', [ProjectController::class, 'downloadFile'])->name('projects.downloadFile');
+Route::get('/projects/download-photo/{photoname}', [ProjectController::class, 'downloadPhoto'])->name('projects.downloadPhoto');
+
+// Task Routes
+Route::post('/tasks/{task}/upload-files', [TaskController::class, 'uploadFiles'])->name('tasks.uploadFiles');
+Route::post('/tasks/{task}/upload-photos', [TaskController::class, 'uploadPhotos'])->name('tasks.uploadPhotos');
+Route::get('/tasks/download-file/{filename}', [TaskController::class, 'downloadFile'])->name('tasks.downloadFile');
+Route::get('/tasks/download-photo/{photoname}', [TaskController::class, 'downloadPhoto'])->name('tasks.downloadPhoto');
 
 });
 
