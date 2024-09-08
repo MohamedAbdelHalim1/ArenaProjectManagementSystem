@@ -5,6 +5,64 @@
         </h2>
     </x-slot>
 
+
+    <div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Projects Card -->
+            <a href="#projects" class="no-underline-hover">
+                <div class="bg-blue-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks</h3>
+                    <p class="text-3xl font-bold">{{$totalTasks}}</p>
+                </div>
+            </a>
+
+            <!-- Total Tasks (Started) Card -->
+            <a href="#" class="no-underline-hover">
+                <div class="bg-green-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks (Ask To Start)</h3>
+                    <p class="text-3xl font-bold">{{$totalAskToStart}}</p>
+                </div>
+            </a>
+
+                      <!-- Total Tasks (Started) Card -->
+                      <a href="#" class="no-underline-hover">
+                <div class="bg-green-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks (Started)</h3>
+                    <p class="text-3xl font-bold">{{$totalStart}}</p>
+                </div>
+            </a>
+
+            <!-- Total Tasks (Not Started) Card -->
+            <a href="#" class="no-underline-hover">
+                <div class="bg-orange-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks (Not Started)</h3>
+                    <p class="text-3xl font-bold">{{$totalNotStarted}}</p>
+                </div>
+            </a>
+
+            <!-- Total Tasks (Done) Card -->
+            <a href="#" class="no-underline-hover">
+                <div class="bg-purple-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks (Done)</h3>
+                    <p class="text-3xl font-bold">{{$totalDone}}</p>
+                </div>
+            </a>
+
+                        <!-- Total Tasks (Done) Card -->
+            <a href="#" class="no-underline-hover">
+                <div class="bg-purple-500 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold">Total Tasks (Refusal Reason)</h3>
+                    <p class="text-3xl font-bold">{{$totalRefused}}</p>
+                </div>
+            </a>
+
+
+        </div>
+    </div>
+</div>
+
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">

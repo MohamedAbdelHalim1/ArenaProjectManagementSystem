@@ -58,6 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/tasks/{task}/list-items', [ListItemController::class, 'index']);
     Route::post('/tasks/{task}/list-items', [ListItemController::class, 'store']);
     Route::patch('/list-items/{listItem}', [ListItemController::class, 'update']);
+    
+Route::get('/api/departments', [ListItemController::class, 'getDepartments']);
+Route::get('/api/users', [ListItemController::class, 'getUsers']);
+Route::post('/assign-tasklist', [ListItemController::class, 'assignTaskList'])->name('assign.tasklist');
+
+
+
     Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.comments.store');
     Route::get('/tasks/{task}/comments', [TaskController::class, 'getComments']);
     

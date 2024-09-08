@@ -167,7 +167,7 @@
     <!-- Include Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <!-- Include Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
     <!-- Initialize Select2 -->
     <script>
@@ -181,7 +181,8 @@
                 var button = $(event.relatedTarget);
                 var departmentId = button.data('department-id');
                 var departmentName = button.data('department-name');
-                var departmentStaffs = button.data('department-staffs').split(',');
+                var departmentStaffs = String(button.data('department-staffs')).split(',');
+
 
                 var modal = $(this);
                 modal.find('#edit_name').val(departmentName);
@@ -196,6 +197,7 @@
                 var departmentId = button.data('department-id');
                 var departmentName = button.data('department-name');
 
+                
                 var modal = $(this);
                 modal.find('#departmentName').text(departmentName);
 

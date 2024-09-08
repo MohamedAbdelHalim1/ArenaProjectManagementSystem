@@ -121,9 +121,15 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        $totalTasks = $project->tasks()->count();
+        $totalAskToStart = $project->tasks()->where('status','ask_to_start')->count();
+        $totalStart = $project->tasks()->where('status','started')->count();
+        $totalNotStarted = $project->tasks()->where('status','not_started')->count();
+        $totalDone = $project->tasks()->where('status','done')->count();
+        $totalRefused = $project->tasks()->where('status','refused')->count();
         $users = User::all();
         $departments = Department::all();
-        return view('projects.show', compact('project','users','departments'));
+        return view('projects.show', compact('project','users','departments','totalTasks','totalAskToStart','totalStart','totalNotStarted','totalDone','totalRefused'));
     }
 
     public function edit(Project $project)
